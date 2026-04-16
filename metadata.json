@@ -1,0 +1,6 @@
+{
+  "name": "AI Image Classifier Pro",
+  "description": "A Teachable Machine-style multi-class image classifier with Logistic Regression, Random Forest, and CNN models.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["Machine Learning", "Computer Vision", "Real-time Training"]
+}
