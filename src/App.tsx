@@ -167,8 +167,8 @@ export default function App() {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <header className="border-b border-border p-4 flex items-center justify-between bg-card/50 backdrop-blur-md sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <div className="bg-primary p-1.5 rounded-lg">
-            <Brain className="h-6 w-6 text-white" />
+          <div className="bg-primary/20 p-1.5 rounded-lg">
+            <Brain className="h-6 w-6 text-primary" />
           </div>
           <h1 className="text-xl font-bold tracking-tight">Teachable Machine Pro</h1>
         </div>
@@ -295,7 +295,7 @@ export default function App() {
                 />
                 {!isPredicting && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/90 backdrop-blur-sm p-6 text-center z-20">
-                    <Brain className="h-12 w-12 mb-4 opacity-20 text-primary" />
+                    <Brain className="h-12 w-12 mb-4 opacity-60 text-primary" />
                     <p className="font-bold text-sm text-muted-foreground uppercase tracking-widest">
                       Train a model to see preview
                     </p>
