@@ -1,6 +1,6 @@
-# AI Image Classifier Pro (Teachable Machine Style)
+# Teachable Machine (AI Image Classifier)
 
-AI Image Classifier Pro is a powerful, browser-based machine learning application that allows users to train custom image classification models in real-time. Inspired by Google's Teachable Machine, it provides a simple 3-column workflow to collect data, train models, and test predictions instantly.
+Teachable Machine is a powerful, browser-based machine learning application that allows users to train custom image classification models in real-time. Inspired by Google's Teachable Machine, it provides a simple 3-column workflow to collect data, train models, and test predictions instantly.
 
 ## 🚀 Features
 

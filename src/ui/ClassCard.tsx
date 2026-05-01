@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Trash2, Image as ImageIcon, Camera } from 'lucide-react';
+import { Trash2, Image as ImageIcon, Camera, MoreVertical, Pencil } from 'lucide-react';
 import { ClassData } from '../types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -23,6 +23,8 @@ export const ClassCard: React.FC<ClassCardProps> = ({
   onStopCapture,
   isCapturing,
 }) => {
+  const [isEditingName, setIsEditingName] = useState(false);
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
@@ -43,69 +45,96 @@ export const ClassCard: React.FC<ClassCardProps> = ({
   };
 
   return (
-    <Card className="w-full bg-card border-border overflow-hidden">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 border-b border-border/50">
-        <div className="flex items-center gap-2 flex-1">
+    <Card className="w-full bg-card border-border border-2 shadow-sm rounded-lg overflow-hidden group">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 border-b border-border/30">
+        <div className="flex items-center gap-2 group/title">
           <Input
             value={classData.name}
             onChange={(e) => onUpdate(classData.id, { name: e.target.value })}
-            className="font-semibold border-none bg-transparent focus-visible:ring-0 p-0 text-base h-auto"
+            className="font-bold text-lg border-none bg-transparent focus-visible:ring-0 p-0 text-foreground h-auto w-auto min-w-[100px]"
           />
+          <Pencil className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover/title:opacity-100 transition-opacity cursor-pointer" />
         </div>
-        <Button variant="ghost" size="icon" onClick={() => onDelete(classData.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
-          <Trash2 className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+            <MoreVertical className="h-4 w-4" />
+          </Button>
+        </div>
       </CardHeader>
-      <CardContent className="p-4">
-        <div className="space-y-4">
-          <p className="text-sm font-medium text-muted-foreground">Add Image Samples:</p>
-          <div className="grid grid-cols-2 gap-3">
+      <CardContent className="p-4 space-y-4">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+            {classData.images.length} Image Samples
+          </span>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => onDelete(classData.id)} 
+            className="h-6 text-[10px] text-muted-foreground hover:text-destructive uppercase tracking-widest font-bold"
+          >
+            Delete Class
+          </Button>
+        </div>
+        
+        <div className="flex gap-4">
+          <div className="flex flex-col gap-2 shrink-0">
             <Button
               variant={isCapturing ? "destructive" : "secondary"}
-              className="h-24 flex flex-col gap-2 border-2 border-dashed border-border hover:border-primary/50 transition-colors"
+              className="h-14 w-28 flex flex-col items-center justify-center gap-1 bg-secondary hover:bg-secondary/80 text-primary border-none shadow-sm"
               onClick={() => isCapturing ? onStopCapture() : onStartCapture(classData.id)}
             >
-              <Camera className="h-8 w-8" />
-              <span className="text-xs font-bold uppercase tracking-wider">{isCapturing ? "Stop" : "Webcam"}</span>
+              <Camera className="h-5 w-5" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">{isCapturing ? "Stop" : "Webcam"}</span>
             </Button>
+            
             <div className="relative">
-              <Input
+              <input
                 type="file"
                 multiple
                 accept="image/*"
                 className="absolute inset-0 opacity-0 cursor-pointer z-10"
                 onChange={handleFileUpload}
               />
-              <Button variant="secondary" className="w-full h-24 flex flex-col gap-2 border-2 border-dashed border-border hover:border-primary/50 transition-colors">
-                <ImageIcon className="h-8 w-8" />
-                <span className="text-xs font-bold uppercase tracking-wider">Upload</span>
+              <Button 
+                variant="secondary" 
+                className="h-14 w-28 flex flex-col items-center justify-center gap-1 bg-secondary hover:bg-secondary/80 text-primary border-none shadow-sm"
+              >
+                <ImageIcon className="h-5 w-5" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">Upload</span>
               </Button>
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex -space-x-2 overflow-hidden">
-              {classData.images.slice(-5).map((img, i) => (
-                <img
-                  key={i}
-                  src={img}
-                  alt={`sample-${i}`}
-                  className="inline-block h-8 w-8 rounded-full ring-2 ring-card object-cover"
-                  referrerPolicy="no-referrer"
-                />
-              ))}
-              {classData.images.length > 5 && (
-                <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-muted ring-2 ring-card text-[10px] font-bold">
-                  +{classData.images.length - 5}
-                </div>
-              )}
-            </div>
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-              {classData.images.length} Samples
-            </span>
+          <div className="flex-1 min-w-0">
+            <ScrollArea className="w-full whitespace-nowrap rounded-md border border-border/50 bg-secondary/30 h-28">
+              <div className="flex p-2 gap-2">
+                {classData.images.length === 0 ? (
+                  <div className="w-24 h-24 flex items-center justify-center text-[10px] text-muted-foreground uppercase tracking-widest bg-muted/20 rounded">
+                    No Samples
+                  </div>
+                ) : (
+                  classData.images.map((img, i) => (
+                    <img
+                      key={i}
+                      src={img}
+                      alt={`sample-${i}`}
+                      className="h-24 w-24 rounded object-cover shadow-sm border border-border/50"
+                      referrerPolicy="no-referrer"
+                    />
+                  ))
+                )}
+              </div>
+            </ScrollArea>
           </div>
         </div>
       </CardContent>
+
+      <div className="h-1 bg-primary/20 w-full">
+        <div 
+          className="h-full bg-primary transition-all duration-300" 
+          style={{ width: `${Math.min(100, (classData.images.length / 50) * 100)}%` }} 
+        />
+      </div>
     </Card>
   );
 };

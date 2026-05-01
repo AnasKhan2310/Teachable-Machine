@@ -1,5 +1,5 @@
 {
-  "name": " Teachable Machine Pro",
+  "name": "Teachable Machine",
   "description": "A Teachable Machine-style multi-class image classifier with Logistic Regression, Random Forest, and CNN models.",
   "requestFramePermissions": [
     "camera"
