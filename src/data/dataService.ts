@@ -40,20 +40,16 @@ export class DataService {
 
     const baseTensors = await Promise.all(allImages.map(img => this.processImage(img)));
     
-    // Data Augmentation: Add horizontal flips and brightness variations to multiply the dataset
+    // Data Augmentation: Add horizontal flips to double the dataset (2x)
+    // This is faster than 4x while still providing good generalization
     const augmentedTensors = tf.tidy(() => {
       const stacked = tf.stack(baseTensors) as tf.Tensor4D;
       const flipped = tf.image.flipLeftRight(stacked);
-      
-      // Random-ish brightness variations
-      const brighter = tf.clipByValue(tf.add(stacked, 0.1), 0, 1);
-      const darker = tf.clipByValue(tf.sub(stacked, 0.1), 0, 1);
-      
-      return tf.concat([stacked, flipped, brighter, darker], 0);
+      return tf.concat([stacked, flipped], 0);
     });
 
-    // Multiply the labels to match augmented tensors (4 sets now: original, flipped, bright, dark)
-    const augmentedLabels = [...allLabels, ...allLabels, ...allLabels, ...allLabels];
+    // Double the labels to match augmented tensors
+    const augmentedLabels = [...allLabels, ...allLabels];
     const ys = tf.oneHot(tf.tensor1d(augmentedLabels, 'int32'), classes.length);
 
     baseTensors.forEach(t => t.dispose());

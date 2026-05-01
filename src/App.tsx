@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import * as tf from '@tensorflow/tfjs';
 import { RandomForestClassifier } from 'ml-random-forest';
-import { Plus, Camera, Upload, Menu, ChevronDown, Sun, Moon, Brain } from 'lucide-react';
+import { Plus, Camera, Upload, Menu, ChevronDown, Sun, Moon, Brain, Settings2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 import { Button } from '@/components/ui/button';
@@ -102,7 +102,7 @@ export default function App() {
       const { xs, ys } = await DataService.prepareDataset(classes);
 
       const cnnResult = await ModelTrainers.trainCNN(xs, ys, classes.length, (epoch) => {
-        setTrainingProgress((epoch / 100) * 100);
+        setTrainingProgress((epoch / 60) * 100);
       });
       modelsRef.current.cnn = cnnResult.model;
       setMetrics(prev => ({ ...prev, cnn: cnnResult.metrics }));
@@ -149,11 +149,11 @@ export default function App() {
         <Button variant="ghost" size="icon" className="text-foreground">
           <Menu className="h-5 w-5" />
         </Button>
-        <div className="flex items-center gap-2">
-          <div className="p-1 rounded-lg bg-primary/10">
+        <div className="flex items-center gap-3">
+          <div className="p-1.5 rounded-lg bg-primary/10">
             <Brain className="h-6 w-6 text-primary" />
           </div>
-          <h1 className="text-xl font-bold text-primary">Teachable Machine</h1>
+          <h1 className="text-xl font-bold tracking-tight text-primary">Teachable Machine</h1>
         </div>
         
         <div className="ml-auto flex items-center gap-2">
@@ -194,53 +194,73 @@ export default function App() {
 
         {/* Middle Column: Training */}
         <div className="lg:col-span-3 flex flex-col items-center">
-          <Card className="w-full bg-card border-2 border-border shadow-sm rounded-lg overflow-hidden sticky top-24">
-            <div className="p-4 border-b border-border/30">
-              <h2 className="text-lg font-bold text-foreground">Training</h2>
-            </div>
-            <CardContent className="p-6 space-y-6">
-              <div className="space-y-4">
-                <Button 
-                  size="lg" 
-                  onClick={trainAll} 
-                  disabled={isTraining}
-                  className={`w-full h-12 font-bold transition-all border-none ${isTraining ? 'bg-secondary text-muted-foreground' : 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-md'}`}
-                >
-                  {isTraining ? "Training..." : (isPredicting ? "Model Trained" : "Train Model")}
-                </Button>
+          <Card className="w-full bg-card border-2 border-border shadow-md rounded-xl overflow-hidden sticky top-24 transition-all hover:shadow-lg">
+            <div className="p-5">
+              <h2 className="text-lg font-bold text-foreground mb-4">Training</h2>
+              
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  <Button 
+                    size="lg" 
+                    onClick={trainAll} 
+                    disabled={isTraining}
+                    className={`w-full h-14 font-bold transition-all border-none text-sm uppercase tracking-wider ${isTraining ? 'bg-secondary text-muted-foreground' : 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20'}`}
+                  >
+                    {isTraining ? (
+                      <span className="flex items-center gap-2">
+                        <motion.div 
+                          animate={{ rotate: 360 }} 
+                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        >
+                          <Settings2 className="h-4 w-4" />
+                        </motion.div>
+                        Training...
+                      </span>
+                    ) : (isPredicting ? "Model Ready" : "Train Model")}
+                  </Button>
 
-                {isTraining && (
-                  <div className="space-y-2">
-                    <Progress value={trainingProgress} className="h-2 bg-secondary" />
-                    <p className="text-[10px] text-center font-bold uppercase tracking-widest text-muted-foreground">
-                      Training {Math.round(trainingProgress)}%
+                  {isTraining && (
+                    <div className="space-y-3 p-4 bg-secondary/30 rounded-lg animate-pulse">
+                      <Progress value={trainingProgress} className="h-2 bg-secondary" />
+                      <p className="text-[10px] text-center font-bold uppercase tracking-widest text-primary">
+                        Optimizing Network: {Math.round(trainingProgress)}%
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {!isTraining && !isPredicting && (
+                  <div className="text-center p-4 bg-primary/5 rounded-lg border border-primary/10">
+                    <p className="text-[10px] text-muted-foreground font-medium uppercase leading-relaxed">
+                      Collect at least 10 images <br /> for each class to start
                     </p>
                   </div>
                 )}
-              </div>
 
-              <Separator className="bg-secondary" />
-
-              <div className="flex items-center justify-between text-xs font-bold text-muted-foreground uppercase tracking-widest group cursor-pointer hover:bg-secondary/50 p-2 rounded transition-colors">
-                <span>Advanced</span>
-                <ChevronDown className="h-4 w-4" />
+                <div className="flex items-center justify-between text-[10px] font-bold text-muted-foreground uppercase tracking-widest group cursor-pointer hover:bg-secondary/80 p-2.5 rounded-lg transition-all border border-transparent hover:border-border/50">
+                  <span className="flex items-center gap-2">
+                    <Settings2 className="h-3.5 w-3.5" />
+                    Advanced Params
+                  </span>
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </div>
               </div>
-            </CardContent>
+            </div>
           </Card>
         </div>
 
         {/* Right Column: Preview */}
         <div className="lg:col-span-4 space-y-6">
-          <Card className="w-full bg-card border-2 border-border shadow-sm rounded-lg overflow-hidden sticky top-24">
-            <div className="p-4 border-b border-border/30 flex items-center justify-between">
+          <Card className="w-full bg-card border-2 border-border shadow-md rounded-xl overflow-hidden sticky top-24">
+            <div className="p-4 flex items-center justify-between">
               <h2 className="text-lg font-bold text-foreground">Preview</h2>
-              <Button variant="outline" size="sm" className="h-8 text-primary font-bold text-[10px] uppercase tracking-widest px-4 border-primary/20">
-                Export Model
+              <Button variant="outline" size="sm" className="h-8 text-primary font-bold text-[10px] uppercase tracking-widest px-4 border-primary/20 rounded-full hover:bg-primary/5">
+                Export
               </Button>
             </div>
             
-            <CardContent className="p-6 space-y-6">
-              <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-foreground">
+            <CardContent className="p-6 pt-0 space-y-6">
+              <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground border-t border-border/30 pt-4">
                 <span>Input</span>
                 <div className="flex items-center gap-2">
                   <Switch 
@@ -256,16 +276,16 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="aspect-video bg-black rounded-lg overflow-hidden relative border border-border/50">
+              <div className="aspect-video bg-black rounded-xl overflow-hidden relative border border-border/50 shadow-inner">
                 <WebcamCapture 
                   onCapture={runInference} 
                   isCapturing={isPredicting} 
                 />
                 {!isPredicting && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/95 text-center">
-                    <Brain className="h-12 w-12 mb-4 text-primary/20" />
-                    <p className="font-bold text-xs text-muted-foreground uppercase tracking-[0.2em] px-8">
-                      Train a model to see your results here
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/95 text-center p-8">
+                    <Brain className="h-14 w-14 mb-4 text-primary opacity-40 drop-shadow-lg" />
+                    <p className="font-bold text-[10px] text-muted-foreground uppercase tracking-[0.3em] leading-relaxed">
+                      Activate training to <br /> see results here
                     </p>
                   </div>
                 )}

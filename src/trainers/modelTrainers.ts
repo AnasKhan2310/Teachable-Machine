@@ -81,7 +81,7 @@ export class ModelTrainers {
       metrics: ['accuracy'],
     });
 
-    const epochs = 100;
+    const epochs = 60;
     const history: any[] = [];
     const res = await model.fit(xs, ys, {
       epochs,
