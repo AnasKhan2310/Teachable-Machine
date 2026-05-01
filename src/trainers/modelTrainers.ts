@@ -71,17 +71,17 @@ export class ModelTrainers {
     model.add(tf.layers.maxPooling2d({ poolSize: 2 }));
     
     model.add(tf.layers.flatten());
-    model.add(tf.layers.dropout({ rate: 0.25 }));
-    model.add(tf.layers.dense({ units: 64, activation: 'relu' }));
+    model.add(tf.layers.dropout({ rate: 0.3 }));
+    model.add(tf.layers.dense({ units: 128, activation: 'relu' }));
     model.add(tf.layers.dense({ units: numClasses, activation: 'softmax' }));
 
     model.compile({
-      optimizer: tf.train.adam(0.001),
+      optimizer: tf.train.adam(0.0005), // Slightly lower learning rate for stability
       loss: 'categoricalCrossentropy',
       metrics: ['accuracy'],
     });
 
-    const epochs = 50;
+    const epochs = 100;
     const history: any[] = [];
     const res = await model.fit(xs, ys, {
       epochs,

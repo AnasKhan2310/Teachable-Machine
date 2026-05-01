@@ -90,8 +90,8 @@ export default function App() {
   }, [activeCaptureClass]);
 
   const trainAll = async () => {
-    if (classes.some(c => c.images.length < 5)) {
-      alert("Each class needs at least 5 images to train.");
+    if (classes.some(c => c.images.length < 10)) {
+      alert("Each class needs at least 10 images to train for better accuracy.");
       return;
     }
 
@@ -102,7 +102,7 @@ export default function App() {
       const { xs, ys } = await DataService.prepareDataset(classes);
 
       const cnnResult = await ModelTrainers.trainCNN(xs, ys, classes.length, (epoch) => {
-        setTrainingProgress((epoch / 50) * 100);
+        setTrainingProgress((epoch / 100) * 100);
       });
       modelsRef.current.cnn = cnnResult.model;
       setMetrics(prev => ({ ...prev, cnn: cnnResult.metrics }));
