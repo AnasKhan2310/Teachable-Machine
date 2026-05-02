@@ -61,6 +61,3 @@ Teachable Machine is a powerful, browser-based machine learning application that
 - **Variety**: Capture images from different angles, distances, and lighting conditions.
 - **Backgrounds**: Try to have a neutral or varied background so the model focuses on the object, not the room.
 
-## 📄 License
-
-MIT License - feel free to use this project for learning or building your own AI tools!
